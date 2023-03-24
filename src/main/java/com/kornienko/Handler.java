@@ -7,8 +7,8 @@ import software.amazon.awssdk.services.s3.model.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class Handler {
@@ -19,28 +19,26 @@ public class Handler {
     }
 
     public void sendRequest() {
-        String bucket = "anatolii-kornienko-website-bucket" + System.currentTimeMillis();
-        String key = "index.html";
+        String bucket = "anatolii-kornienko-website-bucket";
+        System.out.println("Creating bucket " + bucket);
 
-        createBucket(s3Client, bucket);
+//        createBucket(s3Client, bucket);
 
-        System.out.println("Uploading object...");
+        System.out.println("Uploading objects...");
+        List<String> keys = new ArrayList<>();
+        keys.add("index.html");
+        keys.add("another.html");
+        keys.add("css/bg1.png");
+        keys.add("css/image-2.png");
+        keys.add("css/styles.css");
+        keys.forEach(s -> putS3Object(s3Client, bucket, s, "src/main/resources/website/" + s));
 
-//        s3Client.putObject(PutObjectRequest.builder().bucket(bucket).key(key)
-//                        .build(),
-//                RequestBody.fromString("Testing with the {sdk-java}"));
-        String response;
-        response = putS3Object(s3Client, bucket, "index.html", "C:\\MyProjects\\s3manipulations\\src\\main\\resources\\website\\index.html");
-        System.out.println(response);
         System.out.println("Upload complete");
-        System.out.printf("%n");
 
-        cleanUp(s3Client, bucket, key);
+//        Remove bucket
+//        cleanUp(s3Client, bucket, keys);
 
-        System.out.println("Closing the connection to {S3}");
         s3Client.close();
-        System.out.println("Connection closed");
-        System.out.println("Exiting...");
     }
 
     public static void createBucket(S3Client s3Client, String bucketName) {
@@ -64,14 +62,11 @@ public class Handler {
     public static String putS3Object(S3Client s3, String bucketName, String objectKey, String objectPath) {
 
         try {
-            Map<String, String> metadata = new HashMap<>();
-            metadata.put("x-amz-meta-myVal", "test");
             PutObjectRequest putOb = PutObjectRequest.builder()
                     .bucket(bucketName)
                     .key(objectKey)
-                    .metadata(metadata)
+                    .contentType("text/html")
                     .build();
-
             PutObjectResponse response = s3.putObject(putOb, RequestBody.fromBytes(getObjectFile(objectPath)));
             return response.eTag();
 
@@ -111,14 +106,12 @@ public class Handler {
     }
 
 
-
-    public static void cleanUp(S3Client s3Client, String bucketName, String keyName) {
+    public static void cleanUp(S3Client s3Client, String bucketName, List<String> keys) {
         System.out.println("Cleaning up...");
         try {
-            System.out.println("Deleting object: " + keyName);
-            DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder().bucket(bucketName).key(keyName).build();
-            s3Client.deleteObject(deleteObjectRequest);
-            System.out.println(keyName + " has been deleted.");
+            System.out.println("Deleting objects");
+            keys.forEach(s -> s3Client.deleteObject(DeleteObjectRequest.builder().bucket(bucketName).key(s).build()));
+            System.out.println("Objects have been deleted.");
             System.out.println("Deleting bucket: " + bucketName);
             DeleteBucketRequest deleteBucketRequest = DeleteBucketRequest.builder().bucket(bucketName).build();
             s3Client.deleteBucket(deleteBucketRequest);

@@ -1,0 +1,28 @@
+h1 {
+  color: blue;
+  font-size: 5rem;
+}
+
+p {
+  color: red;
+}
+
+.another_page {
+  margin-bottom: 1rem;
+  font-family: "Oswald", sans-serif;
+  font-size: 4rem;
+  font-weight: 200;
+  color: red;
+  background-color: yellow;
+}
+
+.index_page {
+  margin-bottom: 1rem;
+  font-family: "Oswald", sans-serif;
+  font-size: 4rem;
+  font-weight: 200;
+  color: green;
+  background-color: orange;
+}
+
+
