@@ -20,9 +20,9 @@ public class Handler {
 
     public void sendRequest() {
         String bucket = "anatolii-kornienko-website-bucket";
-        System.out.println("Creating bucket " + bucket);
 
-//        createBucket(s3Client, bucket);
+        System.out.println("Creating bucket " + bucket);
+        createBucket(s3Client, bucket);
 
         System.out.println("Uploading objects...");
         List<String> keys = new ArrayList<>();
@@ -35,7 +35,7 @@ public class Handler {
 
         System.out.println("Upload complete");
 
-//        Remove bucket
+//        Remove bucket and it content
 //        cleanUp(s3Client, bucket, keys);
 
         s3Client.close();
@@ -79,7 +79,7 @@ public class Handler {
     }
 
     // Return a byte array.
-    private static byte[] getObjectFile(String filePath) {
+    protected static byte[] getObjectFile(String filePath) {
 
         FileInputStream fileInputStream = null;
         byte[] bytesArray = null;
