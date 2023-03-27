@@ -19,10 +19,10 @@ public class Handler {
     }
 
     public void sendRequest() {
-        String bucket = "anatolii-kornienko-website-bucket";
+        String bucketName = "anatolii-kornienko-website-bucket";
 
-        System.out.println("Creating bucket " + bucket);
-        createBucket(s3Client, bucket);
+        System.out.println("Creating bucket " + bucketName);
+        createBucket(s3Client, bucketName);
 
         System.out.println("Uploading objects...");
         List<String> keys = new ArrayList<>();
@@ -31,12 +31,12 @@ public class Handler {
         keys.add("css/bg1.png");
         keys.add("css/image-2.png");
         keys.add("css/styles.css");
-        keys.forEach(s -> putS3Object(s3Client, bucket, s, "src/main/resources/website/" + s));
+        keys.forEach(s -> putS3Object(s3Client, bucketName, s, "src/main/resources/website/" + s));
 
         System.out.println("Upload complete");
 
 //        Remove bucket and it content
-//        cleanUp(s3Client, bucket, keys);
+//        cleanUp(s3Client, bucketName, keys);
 
         s3Client.close();
     }
